@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     containerButton: {
         height: 40,
         width: 150,
-        backgroundColor: '#74e8e8',
+        backgroundColor: "#00BDD6",
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
