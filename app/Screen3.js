@@ -10,9 +10,18 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 export default function Screen3({ navigation, route }) {
     var [name, setName] = useState("");
     var [newJob, setNewJob] = useState("");
+    var [isEditing, setIsEditing] = useState(false); // Biến để kiểm tra xem đang cập nhật hay thêm mới
+    var [index, setIndex] = useState(null); // Lưu lại index nếu đang cập nhật công việc
+
 
     useEffect(() => {
-        setName(route.params.name)
+        setName(route.params.name);
+        if (route.params.job) {
+            // Nếu có job từ Screen2 thì gán vào newJob và chuyển sang chế độ chỉnh sửa
+            setNewJob(route.params.job);
+            setIsEditing(true);
+            setIndex(route.params.index);
+        }
     }, [route.params.name])
     return (
         <View style={styles.container}>
@@ -54,10 +63,16 @@ export default function Screen3({ navigation, route }) {
                 <TouchableOpacity
                     style={styles.containerButton}
                     onPress={() => {
-                        navigation.navigate('Trang Chủ', { name, newJob });
+                        if (isEditing) {
+                            // Nếu đang chỉnh sửa, gửi job đã cập nhật và index
+                            navigation.navigate('Trang Chủ', { updatedJob: newJob, index });
+                        } else {
+                            // Nếu đang thêm mới, chỉ gửi job mới
+                            navigation.navigate('Trang Chủ', { name, newJob });
+                        }
                     }}
                 >
-                    <Text style={{ color: 'white' }}>FINISH</Text>
+                    <Text style={{ color: 'white' }}>{isEditing ? "UPDATE" : "FINISH"}</Text>
                     <AntDesign name="arrowright" size={15} style={{ color: 'white' }} />
                 </TouchableOpacity>
             </View>

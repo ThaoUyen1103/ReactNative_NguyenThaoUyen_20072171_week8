@@ -7,6 +7,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Screen3 from './Screen3';
 
+
 const Stack = createStackNavigator();
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
         <Stack.Screen name="Home" component={Screen1} />
         <Stack.Screen name="Trang Chủ" component={Screen2} />
         <Stack.Screen name="Screen3" component={Screen3} />
+
 
       </Stack.Navigator>
     </NavigationContainer>

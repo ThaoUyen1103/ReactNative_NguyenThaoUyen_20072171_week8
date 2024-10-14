@@ -6,6 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function Screen2({ navigation, route }) {
     var [name, setName] = useState("")
+
     var [data, setData] = useState([
         {
             job: "To check email",
@@ -32,7 +33,7 @@ export default function Screen2({ navigation, route }) {
             isChecked: true
         },
     ]);
-
+    var [searchTerm, setSearchTerm] = useState("");
     useEffect(() => {
         if (route.params && route.params.name) {
             setName(route.params.name);
@@ -49,7 +50,19 @@ export default function Screen2({ navigation, route }) {
         }
     }, [route.params]);
 
+    useEffect(() => {
+        if (route.params?.updatedJob && route.params.index !== undefined) {
+            const updatedData = data.map((item, index) =>
+                index === route.params.index ? { ...item, job: route.params.updatedJob } : item
+            );
+            setData(updatedData);
+        }
+    }, [route.params]);
 
+    // Lọc các công việc theo từ khóa tìm kiếm
+    const filteredJobs = data.filter(job =>
+        job.job.toLowerCase().includes(searchTerm.toLowerCase())
+    );
     return (
         <View style={styles.container}>
             <View style={styles.viewAvatar}>
@@ -74,12 +87,17 @@ export default function Screen2({ navigation, route }) {
             </View>
             <View style={styles.viewSearch}>
                 <Feather name="search" size={15} style={{ marginLeft: 15, marginRight: 20 }} />
-                <TextInput placeholder="Search"></TextInput>
+                <TextInput
+                    placeholder="Search"
+                    value={searchTerm}
+                    onChangeText={setSearchTerm} // Cập nhật từ khóa tìm kiếm khi người dùng nhập
+                />
             </View>
 
             <View style={styles.viewTotalJob}>
                 <ScrollView style={{ width: '100%' }}> {
-                    data.filter(o => o.job).map((job, index) => (
+                    // Sử dụng filteredJobs thay vì data để hiển thị công việc đã được lọc
+                    filteredJobs.map((job, index) => (
                         <View key={index} style={styles.viewJob}>
                             <CheckBox
                                 value={job.isChecked}
@@ -90,14 +108,18 @@ export default function Screen2({ navigation, route }) {
                                 style={{ marginLeft: 20 }}
                             />
                             <Text style={{ marginLeft: 20, fontWeight: 700, fontSize: 16, width: 220 }}>{job.job}</Text>
-                            <Pressable onPress={() => store.dispatch({ type: 'UPDATE', job: job.job })}>
+                            <Pressable onPress={() => navigation.navigate('Screen3', { job: job.job, index })}>
                                 <AntDesign name='edit' size={25} style={{ marginLeft: 32, color: 'red' }} />
+                            </Pressable>
+                            <Pressable onPress={() => setData(data.filter((_, i) => i !== index))}>
+                                <Feather name="trash-2" size={25} style={{ marginLeft: 10, color: 'red' }} />
                             </Pressable>
                         </View>
                     ))
                 }
                 </ScrollView>
             </View>
+
             <Pressable style={styles.btnAdd} onPress={() => { navigation.navigate("Screen3", { name }) }}>
                 <Text style={{ fontWeight: 700, fontSize: 40, color: "#fff" }}>+</Text>
             </Pressable>
